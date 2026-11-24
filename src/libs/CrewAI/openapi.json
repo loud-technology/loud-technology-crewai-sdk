@@ -1,0 +1,584 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "CrewAI AMP API",
+    "description": "REST API for interacting with your deployed CrewAI crews on CrewAI AMP.\n\n## Getting Started\n\n1. **Find your crew URL**: Get your unique crew URL from the CrewAI AMP dashboard\n2. **Copy examples**: Use the code examples from each endpoint page as templates\n3. **Replace placeholders**: Update URLs and tokens with your actual values\n4. **Test with your tools**: Use cURL, Postman, or your preferred API client\n\n## Authentication\n\nAll API requests require a bearer token for authentication. There are two types of tokens:\n\n- **Bearer Token**: Organization-level token for full crew operations\n- **User Bearer Token**: User-scoped token for individual access with limited permissions\n\nYou can find your bearer tokens in the Status tab of your crew's detail page in the CrewAI AMP dashboard.\n\n## Reference Documentation\n\nThis documentation provides comprehensive examples for each endpoint:\n\n- **Request formats** with all required and optional parameters\n- **Response examples** for success and error scenarios\n- **Code samples** in multiple programming languages\n- **Authentication patterns** with proper Bearer token usage\n\nCopy the examples and customize them with your actual crew URL and authentication tokens.\n\n## Workflow\n\n1. **Discover inputs** using `GET /inputs`\n2. **Start execution** using `POST /kickoff`\n3. **Monitor progress** using `GET /status/{kickoff_id}`\n",
+    "version": "1.0.0",
+    "contact": {
+      "name": "CrewAI Support",
+      "email": "support@crewai.com",
+      "url": "https://crewai.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://your-actual-crew-name.crewai.com",
+      "description": "Replace with your actual deployed crew URL from the CrewAI AMP dashboard"
+    },
+    {
+      "url": "https://my-travel-crew.crewai.com",
+      "description": "Example travel planning crew (replace with your URL)"
+    },
+    {
+      "url": "https://content-creation-crew.crewai.com",
+      "description": "Example content creation crew (replace with your URL)"
+    },
+    {
+      "url": "https://research-assistant-crew.crewai.com",
+      "description": "Example research assistant crew (replace with your URL)"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/inputs": {
+      "get": {
+        "summary": "Get Required Inputs",
+        "description": "**📋 Reference Example Only** - *This shows the request format. To test with your actual crew, copy the cURL example and replace the URL + token with your real values.*\n\nRetrieves the list of all required input parameters that your crew expects for execution.\nUse this endpoint to discover what inputs you need to provide when starting a crew execution.\n",
+        "operationId": "getRequiredInputs",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved required inputs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "inputs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Array of required input parameter names",
+                      "example": [
+                        "budget",
+                        "interests",
+                        "duration",
+                        "age"
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "travel_crew": {
+                    "summary": "Travel planning crew inputs",
+                    "value": {
+                      "inputs": [
+                        "budget",
+                        "interests",
+                        "duration",
+                        "age"
+                      ]
+                    }
+                  },
+                  "outreach_crew": {
+                    "summary": "Outreach crew inputs",
+                    "value": {
+                      "inputs": [
+                        "name",
+                        "title",
+                        "company",
+                        "industry",
+                        "our_product",
+                        "linkedin_url"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/kickoff": {
+      "post": {
+        "summary": "Start Crew Execution",
+        "description": "**📋 Reference Example Only** - *This shows the request format. To test with your actual crew, copy the cURL example and replace the URL + token with your real values.*\n\nInitiates a new crew execution with the provided inputs. Returns a kickoff ID that can be used\nto track the execution progress and retrieve results.\n\nCrew executions can take anywhere from seconds to minutes depending on their complexity.\nConsider using webhooks for real-time notifications or implement polling with the status endpoint.\n",
+        "operationId": "startCrewExecution",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "inputs"
+                ],
+                "properties": {
+                  "inputs": {
+                    "type": "object",
+                    "description": "Key-value pairs of all required inputs for your crew",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "example": {
+                      "budget": "1000 USD",
+                      "interests": "games, tech, ai, relaxing hikes, amazing food",
+                      "duration": "7 days",
+                      "age": "35"
+                    }
+                  },
+                  "meta": {
+                    "type": "object",
+                    "description": "Additional metadata to pass to the crew",
+                    "additionalProperties": true,
+                    "example": {
+                      "requestId": "user-request-12345",
+                      "source": "mobile-app"
+                    }
+                  },
+                  "taskWebhookUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Callback URL executed after each task completion",
+                    "example": "https://your-server.com/webhooks/task"
+                  },
+                  "stepWebhookUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Callback URL executed after each agent thought/action",
+                    "example": "https://your-server.com/webhooks/step"
+                  },
+                  "crewWebhookUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Callback URL executed when the crew execution completes",
+                    "example": "https://your-server.com/webhooks/crew"
+                  }
+                }
+              },
+              "examples": {
+                "travel_planning": {
+                  "summary": "Travel planning crew",
+                  "value": {
+                    "inputs": {
+                      "budget": "1000 USD",
+                      "interests": "games, tech, ai, relaxing hikes, amazing food",
+                      "duration": "7 days",
+                      "age": "35"
+                    },
+                    "meta": {
+                      "requestId": "travel-req-123",
+                      "source": "web-app"
+                    }
+                  }
+                },
+                "outreach_campaign": {
+                  "summary": "Outreach crew with webhooks",
+                  "value": {
+                    "inputs": {
+                      "name": "John Smith",
+                      "title": "CTO",
+                      "company": "TechCorp",
+                      "industry": "Software",
+                      "our_product": "AI Development Platform",
+                      "linkedin_url": "https://linkedin.com/in/johnsmith"
+                    },
+                    "taskWebhookUrl": "https://api.example.com/webhooks/task",
+                    "crewWebhookUrl": "https://api.example.com/webhooks/crew"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Crew execution started successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "kickoff_id": {
+                      "type": "string",
+                      "description": "Unique identifier for tracking this execution",
+                      "example": "abcd1234-5678-90ef-ghij-klmnopqrstuv"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body or missing required inputs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "422": {
+            "description": "Validation error - ensure all required inputs are provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/status/{kickoff_id}": {
+      "get": {
+        "summary": "Get Execution Status",
+        "description": "**📋 Reference Example Only** - *This shows the request format. To test with your actual crew, copy the cURL example and replace the URL + token with your real values.*\n\nRetrieves the current status and results of a crew execution using its kickoff ID.\n\nThe response structure varies depending on the execution state:\n- **running**: Execution in progress with current task info\n- **completed**: Execution finished with full results\n- **error**: Execution failed with error details\n",
+        "operationId": "getExecutionStatus",
+        "parameters": [
+          {
+            "name": "kickoff_id",
+            "in": "path",
+            "required": true,
+            "description": "The kickoff ID returned from the /kickoff endpoint",
+            "schema": {
+              "type": "string",
+              "example": "abcd1234-5678-90ef-ghij-klmnopqrstuv"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved execution status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionStatus"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "Kickoff ID not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Execution not found",
+                  "message": "No execution found with ID: abcd1234-5678-90ef-ghij-klmnopqrstuv"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    },
+    "/resume": {
+      "post": {
+        "summary": "Resume Crew Execution with Human Feedback",
+        "description": "**📋 Reference Example Only** - *This shows the request format. To test with your actual crew, copy the cURL example and replace the URL + token with your real values.*\n\nResume a paused crew execution with human feedback for Human-in-the-Loop (HITL) workflows.\nWhen a task with `human_input=True` completes, the crew execution pauses and waits for human feedback.\n\n**IMPORTANT**: You must provide the same webhook URLs (`taskWebhookUrl`, `stepWebhookUrl`, `crewWebhookUrl`)\nthat were used in the original kickoff call. Webhook configurations are NOT automatically carried over -\nthey must be explicitly provided in the resume request to continue receiving notifications.\n",
+        "operationId": "resumeCrewExecution",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "execution_id",
+                  "task_id",
+                  "human_feedback",
+                  "is_approve"
+                ],
+                "properties": {
+                  "execution_id": {
+                    "type": "string",
+                    "description": "The unique identifier for the crew execution (from kickoff)",
+                    "example": "abcd1234-5678-90ef-ghij-klmnopqrstuv"
+                  },
+                  "task_id": {
+                    "type": "string",
+                    "description": "The ID of the task that requires human feedback",
+                    "example": "research_task"
+                  },
+                  "human_feedback": {
+                    "type": "string",
+                    "description": "Your feedback on the task output. This will be incorporated as additional context for subsequent task executions.",
+                    "example": "Great research! Please add more details about recent developments in the field."
+                  },
+                  "is_approve": {
+                    "type": "boolean",
+                    "description": "Whether you approve the task output: true = positive feedback (continue), false = negative feedback (retry task)",
+                    "example": true
+                  },
+                  "taskWebhookUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Callback URL executed after each task completion. MUST be provided to continue receiving task notifications.",
+                    "example": "https://your-server.com/webhooks/task"
+                  },
+                  "stepWebhookUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Callback URL executed after each agent thought/action. MUST be provided to continue receiving step notifications.",
+                    "example": "https://your-server.com/webhooks/step"
+                  },
+                  "crewWebhookUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Callback URL executed when the crew execution completes. MUST be provided to receive completion notification.",
+                    "example": "https://your-server.com/webhooks/crew"
+                  }
+                }
+              },
+              "examples": {
+                "approve_and_continue": {
+                  "summary": "Approve task and continue execution",
+                  "value": {
+                    "execution_id": "abcd1234-5678-90ef-ghij-klmnopqrstuv",
+                    "task_id": "research_task",
+                    "human_feedback": "Excellent research! Proceed to the next task.",
+                    "is_approve": true,
+                    "taskWebhookUrl": "https://api.example.com/webhooks/task",
+                    "stepWebhookUrl": "https://api.example.com/webhooks/step",
+                    "crewWebhookUrl": "https://api.example.com/webhooks/crew"
+                  }
+                },
+                "request_revision": {
+                  "summary": "Request task revision with feedback",
+                  "value": {
+                    "execution_id": "abcd1234-5678-90ef-ghij-klmnopqrstuv",
+                    "task_id": "analysis_task",
+                    "human_feedback": "Please include more quantitative data and cite your sources.",
+                    "is_approve": false,
+                    "taskWebhookUrl": "https://api.example.com/webhooks/task",
+                    "crewWebhookUrl": "https://api.example.com/webhooks/crew"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Execution resumed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "resumed",
+                        "retrying",
+                        "completed"
+                      ],
+                      "description": "Status of the resumed execution",
+                      "example": "resumed"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Human-readable message about the resume operation",
+                      "example": "Execution resumed successfully"
+                    }
+                  }
+                },
+                "examples": {
+                  "resumed": {
+                    "summary": "Execution resumed with positive feedback",
+                    "value": {
+                      "status": "resumed",
+                      "message": "Execution resumed successfully"
+                    }
+                  },
+                  "retrying": {
+                    "summary": "Task will be retried with negative feedback",
+                    "value": {
+                      "status": "retrying",
+                      "message": "Task will be retried with your feedback"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body or execution not in pending state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Invalid Request",
+                  "message": "Execution is not in pending human input state"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "Execution ID or Task ID not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Not Found",
+                  "message": "Execution ID not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "**📋 Reference Documentation** - *The tokens shown in examples are placeholders for reference only.*\n\nUse your actual Bearer Token or User Bearer Token from the CrewAI AMP dashboard for real API calls.\n\n**Bearer Token**: Organization-level access for full crew operations\n**User Bearer Token**: User-scoped access with limited permissions\n"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error type or title",
+            "example": "Authentication Error"
+          },
+          "message": {
+            "type": "string",
+            "description": "Detailed error message",
+            "example": "Invalid bearer token provided"
+          }
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Validation Error"
+          },
+          "message": {
+            "type": "string",
+            "example": "Missing required inputs"
+          },
+          "details": {
+            "type": "object",
+            "properties": {
+              "missing_inputs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "budget",
+                  "interests"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "ExecutionStatus": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "description": "Execution state, such as PENDING, STARTED, RUNNING, SUCCESS, FAILED, FAILURE or NOT FOUND."
+          },
+          "status": {
+            "type": "string",
+            "description": "Human-readable status. On a failed execution it carries the error message."
+          },
+          "result": {
+            "type": "string",
+            "description": "Final output of the crew or flow, set when the state is SUCCESS."
+          },
+          "last_step": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Last step the crew or flow executed."
+          }
+        }
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Authentication failed - check your bearer token",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Unauthorized",
+              "message": "Invalid or missing bearer token"
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Not Found",
+              "message": "The requested resource was not found"
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Internal Server Error",
+              "message": "An unexpected error occurred"
+            }
+          }
+        }
+      }
+    }
+  }
+}
