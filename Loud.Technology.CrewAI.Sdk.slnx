@@ -16,4 +16,7 @@
     <File Path=".github/ISSUE_TEMPLATE/bug-report.yml" />
     <File Path=".github/ISSUE_TEMPLATE/config.yml" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="src/tests/IntegrationTests/Loud.Technology.CrewAI.Sdk.IntegrationTests.csproj" />
+  </Folder>
 </Solution>
