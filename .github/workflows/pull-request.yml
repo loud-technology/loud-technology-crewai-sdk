@@ -12,7 +12,7 @@ env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   CONFIGURATION: Release
-  SOLUTION: Loud.Technology.CrewAI.Sdk.slnx
+  SOLUTION: Softplan.Soft.Suite.CrewAI.Sdk.slnx
 
 jobs:
   test:

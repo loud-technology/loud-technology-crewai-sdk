@@ -4,7 +4,7 @@
   <p><strong>A .NET client for the API of a crew or flow deployed on CrewAI AMP.</strong></p>
   <p>Generated C# operations from the CrewAI AMP OpenAPI specification. You get typed calls to read the inputs, start an execution, poll its status, and resume it with human feedback.</p>
 
-  [![CI](https://github.com/loud-technology/loud-technology-crewai-sdk/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/loud-technology/loud-technology-crewai-sdk/actions/workflows/dotnet.yml)
+  [![CI](https://github.com/softplan/softplan-soft-suite-crewai-sdk-dotnet/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/softplan/softplan-soft-suite-crewai-sdk-dotnet/actions/workflows/dotnet.yml)
   [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
   [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 </div>
@@ -12,7 +12,7 @@
 ---
 
 > [!NOTE]
-> This community SDK is maintained by loud-technology and generated from the CrewAI AMP OpenAPI specification. It is not an official CrewAI SDK.
+> This community SDK is maintained by Softplan and generated from the CrewAI AMP OpenAPI specification. It is not an official CrewAI SDK.
 
 ## What you get
 
@@ -41,7 +41,7 @@ dotnet add package CrewAI
 
 ### GitHub Packages
 
-The same package is published to the [loud-technology GitHub Packages registry](https://github.com/orgs/loud-technology/packages?repo_name=loud-technology-crewai-sdk). GitHub requires authentication to download NuGet packages.
+The same package is published to the [Softplan GitHub Packages registry](https://github.com/orgs/softplan/packages?repo_name=softplan-soft-suite-crewai-sdk-dotnet). GitHub requires authentication to download NuGet packages.
 
 Create a [personal access token (classic)](https://github.com/settings/tokens) with the `read:packages` scope, then register the source once:
 
@@ -53,21 +53,21 @@ dotnet nuget add source \
   --username "$GITHUB_PACKAGES_USER" \
   --password "$GITHUB_PACKAGES_TOKEN" \
   --store-password-in-clear-text \
-  --name loud-technology \
-  "https://nuget.pkg.github.com/loud-technology/index.json"
+  --name softplan \
+  "https://nuget.pkg.github.com/softplan/index.json"
 
 dotnet add package CrewAI \
-  --source "https://nuget.pkg.github.com/loud-technology/index.json"
+  --source "https://nuget.pkg.github.com/softplan/index.json"
 ```
 
-Use a token limited to `read:packages`, never commit it, and authorize it for the organization if loud-technology enforces SAML SSO.
+Use a token limited to `read:packages`, never commit it, and authorize it for the organization if Softplan enforces SAML SSO.
 
 ## Quick start
 
 This program reads the inputs the crew expects, starts an execution, and polls its status until it finishes.
 
 ```csharp
-using Loud.Technology.CrewAI.Sdk;
+using Softplan.Soft.Suite.CrewAI.Sdk;
 
 using var client = new CrewAIClient(
     Environment.GetEnvironmentVariable("CREWAI_BEARER_TOKEN")!,
@@ -172,10 +172,10 @@ The script installs AutoSDK 0.34.6 unless that version is already installed. It 
 The URL is pinned to v1.15.9, so no scheduled workflow regenerates the client. To move to another CrewAI release, change `OPENAPI_URL` in `generate.sh`, regenerate, and check whether the status override still applies.
 
 ```text
-Loud.Technology.CrewAI.Sdk.slnx
+Softplan.Soft.Suite.CrewAI.Sdk.slnx
 ├── src/
 │   ├── libs/CrewAI/
-│   │   ├── Loud.Technology.CrewAI.Sdk.csproj
+│   │   ├── Softplan.Soft.Suite.CrewAI.Sdk.csproj
 │   │   ├── openapi.json
 │   │   ├── generate.sh
 │   │   ├── apply-openapi-overrides.py
@@ -187,9 +187,9 @@ Loud.Technology.CrewAI.Sdk.slnx
 ## Build and test
 
 ```bash
-dotnet restore Loud.Technology.CrewAI.Sdk.slnx
-dotnet build Loud.Technology.CrewAI.Sdk.slnx --configuration Release --no-restore
-dotnet test Loud.Technology.CrewAI.Sdk.slnx --configuration Release --no-build
+dotnet restore Softplan.Soft.Suite.CrewAI.Sdk.slnx
+dotnet build Softplan.Soft.Suite.CrewAI.Sdk.slnx --configuration Release --no-restore
+dotnet test Softplan.Soft.Suite.CrewAI.Sdk.slnx --configuration Release --no-build
 ```
 
 The contract tests run without a network. They record the HTTP request and check the default base URL, the Bearer header, the path, and the JSON of each of the four operations, including a status body with a state the specification never listed. The live test calls `GetRequiredInputsAsync` only, which reads and starts nothing. It runs when `CREWAI_BASE_URL` and `CREWAI_BEARER_TOKEN` are set. Otherwise MSTest marks it inconclusive.
@@ -203,7 +203,7 @@ git tag v1.0.0
 git push origin v1.0.0
 ```
 
-The CI workflow restores, builds, tests, and packs in `Release`. Version tags publish the same `.nupkg` to both NuGet.org and the loud-technology GitHub Packages registry. GitHub Packages uses the workflow `GITHUB_TOKEN`. NuGet.org uses Trusted Publishing, which exchanges a GitHub OIDC token for a short-lived API key. For that, create the `nuget-org` environment in the repository settings, set the `NUGET_USER` Actions variable to your NuGet.org profile username, and add a Trusted Publishing policy for this repository on NuGet.org. Untagged builds are retained as artifacts and are not published.
+The CI workflow restores, builds, tests, and packs in `Release`. Version tags publish the same `.nupkg` to both NuGet.org and the Softplan GitHub Packages registry. GitHub Packages uses the workflow `GITHUB_TOKEN`. NuGet.org uses Trusted Publishing, which exchanges a GitHub OIDC token for a short-lived API key. For that, create the `nuget-org` environment in the repository settings, set the `NUGET_USER` Actions variable to your NuGet.org profile username, and add a Trusted Publishing policy for this repository on NuGet.org. Untagged builds are retained as artifacts and are not published.
 
 ## Contributing
 
@@ -216,7 +216,7 @@ Generated files are intentionally committed so package builds are deterministic 
 
 ## Security and support
 
-- Report SDK bugs through [GitHub Issues](https://github.com/loud-technology/loud-technology-crewai-sdk/issues).
+- Report SDK bugs through [GitHub Issues](https://github.com/softplan/softplan-soft-suite-crewai-sdk-dotnet/issues).
 - For CrewAI AMP behavior, tokens, or access, contact CrewAI through the channels it provides.
 - Do not disclose bearer tokens or crew URLs in public issues.
 

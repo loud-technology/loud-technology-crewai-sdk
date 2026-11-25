@@ -1,4 +1,4 @@
-namespace Loud.Technology.CrewAI.Sdk.IntegrationTests;
+namespace Softplan.Soft.Suite.CrewAI.Sdk.IntegrationTests;
 
 [TestClass]
 public sealed class LiveTests

@@ -20,7 +20,7 @@ uv run --quiet --no-project --with pyyaml==6.0.2 python -I apply-openapi-overrid
 rm -rf Generated
 
 autosdk generate openapi.json \
-  --namespace Loud.Technology.CrewAI.Sdk \
+  --namespace Softplan.Soft.Suite.CrewAI.Sdk \
   --clientClassName CrewAIClient \
   --targetFramework net10.0 \
   --output Generated \
