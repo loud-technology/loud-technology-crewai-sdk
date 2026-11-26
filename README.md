@@ -36,7 +36,7 @@ The default base URL in the client, `https://your-actual-crew-name.crewai.com`, 
 ### NuGet.org
 
 ```bash
-dotnet add package CrewAI
+dotnet add package Softplan.SoftSuite.CrewAI
 ```
 
 ### GitHub Packages
@@ -56,7 +56,7 @@ dotnet nuget add source \
   --name softplan \
   "https://nuget.pkg.github.com/softplan/index.json"
 
-dotnet add package CrewAI \
+dotnet add package Softplan.SoftSuite.CrewAI \
   --source "https://nuget.pkg.github.com/softplan/index.json"
 ```
 
