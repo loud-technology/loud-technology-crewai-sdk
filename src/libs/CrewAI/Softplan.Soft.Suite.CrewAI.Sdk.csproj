@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>Softplan.Soft.Suite.CrewAI.Sdk</AssemblyName>
+    <RootNamespace>Softplan.Soft.Suite.CrewAI.Sdk</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Label="NuGet">
+    <PackageId>CrewAI</PackageId>
+    <Title>CrewAI AMP .NET SDK</Title>
+    <Description>Strongly typed .NET SDK for the CrewAI AMP API of a deployed crew or flow, generated from its OpenAPI specification with AutoSDK. Community SDK, not an official CrewAI package.</Description>
+    <PackageTags>crewai;crewai-amp;crew;flow;agents;ai;api;client;sdk;dotnet;openapi;autosdk</PackageTags>
+    <PackageProjectUrl>https://github.com/softplan/softplan-soft-suite-crewai-sdk-dotnet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/softplan/softplan-soft-suite-crewai-sdk-dotnet.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+</Project>
